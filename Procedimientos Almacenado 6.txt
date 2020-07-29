@@ -1,0 +1,225 @@
+CREATE TABLE  linea  (
+  idLinea       CHAR(20) primary key, 
+  nombreLinea   CHAR(100) NOT NULL , 
+  financiadoPor CHAR(30)  NOT NULL
+);
+
+CREATE TABLE  proyecto (
+  idProyecto     CHAR(20) primary key, 
+  idLinea        CHAR(20) NOT NULL, 
+  nombreProyecto CHAR(100) NOT NULL, 
+  F_Inicio       DATE NOT NULL, 
+  F_Terminacion  DATE NOT NULL, 
+  Presupuesto    NUMBER(10,0) NOT NULL, 
+  CONSTRAINT     FK_Linea    FOREIGN KEY (idLinea) REFERENCES  LINEA (idLinea)
+);
+
+CREATE TABLE depAcademico (
+  idDepartamento NUMBER primary key,
+  Departamento   CHAR(30) NOT NULL
+);
+
+CREATE TABLE  investigador (
+  id                CHAR(13) primary key, 
+  nombreInvestigador CHAR(50) NOT NULL, 
+  telefono           NUMBER NOT NULL,
+  email              CHAR(50) NOT NULL,
+  idDepartamento     NUMBER   NOT NULL,  
+  CONSTRAINT FK_DepAcademico FOREIGN KEY (idDepartamento) 
+                             REFERENCES  DEPACADEMICO (idDepartamento)
+);
+
+CREATE TABLE  asignado (
+  id_investigador   CHAR(13) NOT NULL, 
+  idProyecto        CHAR(20) NOT NULL,  
+  F_Inicio          DATE NOT NULL, 
+  F_Termino         DATE,
+  tipoParticipacion CHAR(20) NOT NULL,
+  CONSTRAINT FK_Investigador FOREIGN KEY (id_investigador) REFERENCES  investigador (id), 
+  CONSTRAINT FK_Proyecto     FOREIGN KEY (idProyecto)  REFERENCES  proyecto (idProyecto)
+);
+
+insert into linea values('AM10','Tecnologia y Ciencia','Colciencias Col');
+insert into linea values('AM11','Telematica, gestión de redes y seguridad','Colciencias Col');
+insert into linea values('RP10','Medio ambiente y gestión de recursos','USTA');
+insert into linea values('CF15','Robotica y mecanica','USB');
+insert into linea values('EL20','Sociedad, transformación y humanismo','Colfuturo');
+
+Insert into proyecto values
+('2016-2114','AM10','Construccion de un simulador para practicas de produccion de quesos',TO_DATE('2013/10/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),15000000);
+
+Insert into proyecto values
+('2016-2134','AM10','Lineamiento para la presentacion de proyectos de software',TO_DATE('2014/02/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),10000000);
+
+Insert into proyecto values
+('2016-2135','CF15','Diseño de plataforma electronica para el lanzamiento...',TO_DATE('2014/04/01', 'yyyy/mm/dd'),TO_DATE('2015/03/20', 'yyyy/mm/dd'),10000000);
+
+insert into depAcademico values(1245,'Faculta de CyT');
+insert into depAcademico values(1247,'Faculta de Educación');
+insert into depAcademico values(1249,'Faculta de Ingenieria');
+insert into depAcademico values(1221,'Depart Investigaciones');
+insert into depAcademico values(1280,'Fac Admon y CC');
+
+insert into Investigador values(1064745844,'Fabian Cortes',2541242,'fabiancortesj@gmail.com',1245 );
+insert into Investigador values(1064744544,'Cecilia Montes',9841202,'cmontes@ustadistancia.edu.co',1245 );
+insert into Investigador values(19784520,'luis Carlos Romero',7356987,'Lromerot@ustadistancia.edu.co',1249 );
+
+
+insert into asignado values('1064745844','2016-2114',TO_DATE('2013/10/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),'1');
+
+insert into asignado values('1064744544','2016-2134',TO_DATE('2014/10/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),'2');
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE PROCEDURE ELIMINACION(idp char,nom char,pres number)
+
+IS
+CURSOR listas IS  SELECT idProyecto,  nombreProyecto, Presupuesto   FROM  proyecto;
+
+
+begin
+open listas;
+FETCH listas INTO idp,nom,pres;
+LOOP
+DBMS_OUTPUT.PUT_LINE('identificacion' || idp ||'nombre' || nom ||'presupuesto' || pres);
+
+FETCH listas INTO idp,nom,pres;
+EXIT WHEN listas %NOTFOUND;
+END LOOP;
+CLOSE listas;
+END;
+
+execute ELIMINACION;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE REGISTRAR_PROYECTO(P_ID CHAR,
+
+L_ID  CHAR,
+
+P_NOMBRES CHAR,
+
+F_I DATE,
+
+F_T DATE,
+
+PR NUMBER)
+
+ IS
+
+total number;
+
+--fuera CHAR;
+
+ BEGIN
+
+total :=0;
+--fuera := 'anulado';
+
+select count(*) into total from proyecto where idProyecto=P_ID;
+
+if total = 0 then
+insert into  proyecto values (P_ID,L_ID,P_NOMBRES,F_I,F_T,PR );
+end if;
+--if total = 1  then
+--UPDATE proyecto SET nombreProyecto = fuera WHERE idProyecto=P_ID;
+--DELETE  FROM proyecto where idProyecto=P_ID ;
+--end if;
+
+end;
+
+begin
+REGISTRAR_PROYECTO('2016-2114','AM27','Construccion quesos',SYSDATE,TO_DATE('2014/11/09', 'yyyy/mm/dd'),15300000);
+--REGISTRAR_PROYECTO('2016-2109','RP10','Construccion edificios',TO_DATE('2010/03/04', 'yyyy/mm/dd'),TO_DATE('2016/03/07', 'yyyy/mm/dd'),100000);
+--REGISTRAR_PROYECTO('2016-2122','EL20','Construccion',TO_DATE('2010/07/04', 'yyyy/mm/dd'),TO_DATE('2016/11/07', 'yyyy/mm/dd'),15400);
+commit;
+end;
+select * from PROYECTO; 
+ 
+ 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE CAMBIAR_PROYECTO(P_ID CHAR,
+
+L_ID  CHAR,
+
+P_NOMBRES CHAR,
+
+F_I DATE,
+
+F_T DATE,
+
+PR NUMBER)
+
+ IS
+
+total number;
+
+--fuera CHAR;
+ BEGIN
+
+total :=0;
+--fuera := 'anulado';
+
+select count(*) into total from proyecto where idProyecto=P_ID;
+
+--if total = 0 then
+--insert into  proyecto values (P_ID,L_ID,P_NOMBRES,F_I,F_T,PR );
+--end if;
+if total = 0  then
+UPDATE proyecto SET idLinea = L_ID,NOMBREPROYECTO = P_NOMBRES,F_Inicio=F_I,F_TERMINACION=F_T, Presupuesto=PR  WHERE idProyecto=P_ID;
+--DELETE  FROM proyecto where idProyecto=P_ID ;
+end if;
+
+end;
+
+
+
+
+begin
+CAMBIAR_PROYECTO('2016-2114','AM10','chokolate',TO_DATE('2010/07/04', 'yyyy/mm/dd'),TO_DATE('2014/02/02', 'yyyy/mm/dd'),1500);
+--REGISTRAR_PROYECTO('2016-2109','RP10','Construccion edificios',TO_DATE('2010/03/04', 'yyyy/mm/dd'),TO_DATE('2016/03/07', 'yyyy/mm/dd'),100000);
+--REGISTRAR_PROYECTO('2016-2122','EL20','Construccion',TO_DATE('2010/07/04', 'yyyy/mm/dd'),TO_DATE('2016/11/07', 'yyyy/mm/dd'),15400);
+commit;
+end;
+select * from PROYECTO; 
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE ELIMINAR_PROYECTO(P_ID CHAR
+
+)
+
+ IS
+
+total number;
+
+--fuera CHAR;
+ BEGIN
+
+total :=0;
+--fuera := 'anulado';
+
+select count(*) into total from proyecto where idProyecto=P_ID;
+
+--if total = 0 then
+--insert into  proyecto values (P_ID,L_ID,P_NOMBRES,F_I,F_T,PR );
+--end if;
+if total = 0  then
+--UPDATE proyecto SET idLinea = L_ID,NOMBREPROYECTO = P_NOMBRES,F_Inicio=F_I,F_TERMINACION=F_T, Presupuesto=PR  WHERE idProyecto=P_ID;
+DELETE  FROM proyecto where idProyecto=P_ID ;
+end if;
+COMMIT;
+end;
+
+
+set serveroutput on;
+
+begin
+ELIMINAR_PROYECTO('2016-2109');
+--REGISTRAR_PROYECTO('2016-2109','RP10','Construccion edificios',TO_DATE('2010/03/04', 'yyyy/mm/dd'),TO_DATE('2016/03/07', 'yyyy/mm/dd'),100000);
+--REGISTRAR_PROYECTO('2016-2122','EL20','Construccion',TO_DATE('2010/07/04', 'yyyy/mm/dd'),TO_DATE('2016/11/07', 'yyyy/mm/dd'),15400);
+commit;
+end;
+select * from PROYECTO; 
