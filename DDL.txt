@@ -1,0 +1,275 @@
+
+---table EMPLEADO------------table EMPLEADO---------------table EMPLEADO---------------table EMPLEADO-------table EMPLEADO--------------table EMPLEADO------------------------------------------------------------------------------------------------------
+create table EMPLEADO ( ID_EMPLEADO number(7) not null primary key, 
+NOMBRE_EMPLEADO varchar(20) not null,
+APELLIDO_EMPLEADO varchar(20) not null,
+TELEFONO_EMPLEADO number(9), 
+SEXO number(1), 
+CEDULA number(7) not null
+ );
+ 
+ 
+-----table DUEÑO.DEL.PUNTO.DE.VENTA ----------------------------------table DUEÑO.DEL.PUNTO.DE.VENTA ---------------table DUEÑO.DEL.PUNTO.DE.VENTA -------------------------------------------------------------------------------------------------------------------
+
+create table DUENO.DEL.PUNTO.DE.VENTA ( ID_DUENO number(7) not null primary key, 
+NOMBRE_DUENO varchar(20),
+APELLIDO_DUENO varchar(20),
+TELEFONO_DUENO number(9),
+NOMBRE_PUNTO_DE_VENTA varchar(30),
+SEXO number(1) 
+ );
+
+------------table PUNTO.DE.VENTA------------------------------table PUNTO.DE.VENTA--------------------------table PUNTO.DE.VENTA--------------------table PUNTO.DE.VENTA---------------------------------------------------------------------------------
+create table PUNTO.DE.VENTA ( ID_PUNTO_DE_VENTA number(7) not null primary key, 
+ID_EMPLEADO number(7) not null, 
+ID_DUENO number(7) not null,
+NOMBRE_PUNTO_DE_VENTA varchar(30),
+DIRECCION varchar (20),
+NOMBRE_DUENO varchar(20),
+foreign key (ID_EMPLEADO) references EMPLEADO (ID_EMPLEADO),
+foreign key (ID_DUENO) references DUENO.PUNTO.VENTA (ID_DUENO)
+   );
+
+---create table VENTAS.DEL.EMPLEADO -----------------------------create table VENTAS.DEL.EMPLEADO -----------------------create table VENTAS.DEL.EMPLEADO --------------------------------------------------------------------------------------------------------------------
+
+create table VENTAS.DEL.EMPLEADO ( ID_VENTAS number(7) not null primary key, 
+ID_EMPLEADO number(7) not null,
+MONTO_DE_VENTA number(20) not null,
+FECHA_VENTA date,	
+foreign key (ID_EMPLEADO) references EMPLEADO (ID_EMPLEADO)
+ );
+
+-----table PRODUCTO-------------------table PRODUCTO-------------------table PRODUCTO-------------table PRODUCTO-----------------table PRODUCTO----------------------------------------------------------------------------------------------
+
+
+create table PRODUCTO ( ID_PRODUCTO number(7) not null primary key, 
+
+NOMBRE_PRODUCTO varchar(30),
+
+PRECIO_PRODUCTO, number(10)
+
+
+ );
+
+--------table PEDIDOS-------------------------table PEDIDOS-------------------------table PEDIDOS-------------------table PEDIDOS----------------table PEDIDOS--------------------------------------------------------------------------
+
+
+
+
+create table PEDIDOS ( ID_PEDIDOS number(7) not null primary key, 
+ID_PRODUCTO number(7) not null,
+ID_PUNTO_DE_VENTA number(7) not null,
+
+NOMBRE_PRODUCTO varchar(30),
+
+CANTIDAD number(10),
+
+MONTO_DE_VENTA number(20) not null,
+
+FECHA_PEDIDO date,
+
+PRECIO_PARCIAL number(21),
+
+
+foreign key (ID_PRODUCTO) references PRODUCTO (ID_PRODUCTO),
+foreign key (ID_PUNTO_DE_VENTA) references PUNTO.VENTA (ID_PUNTO_DE_VENTA)
+   );
+
+
+---------------table FACTURA-------------------table FACTURA-----------------------table FACTURA------------------------------table FACTURA-----------------table FACTURA---------------------------------------------------------------
+
+create table FACTURA ( ID_FACTURA number(7) not null primary key, 
+ID_PEDIDOS number(7) not null,
+ID_EMPLEADO number(7) not null,
+ID_PUNTO_DE_VENTA number(7) not null,
+
+
+
+FECHA_ENTREGA date,
+FECHA_FACTURACION date,
+
+PRECIO_PAGAR number(10),
+
+
+foreign key (ID_PEDIDOS) references PEDIDOS (ID_PEDIDOS),
+foreign key (ID_EMPLEADO) references EMPLEADO (ID_EMPLEADO),
+foreign key (ID_PUNTO_DE_VENTA) references PUNTO.VENTA (ID_PUNTO_DE_VENTA)
+   );
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+---ID---NOMBRE--APELLIDO--TELEFONO---SEXO--CEDULA----
+
+
+insert into EMPLEADO values
+(0000001,'oscar','lopez',313457893,'M',1111112);
+
+insert into EMPLEADO values
+(0000002,'pedro','Gomez',314574893,'M',1111113);
+
+insert into EMPLEADO values
+(0000003,'juan','Monte',300274893,'M',1111114);
+
+insert into EMPLEADO values
+(0000004,'xion','buitrago',314190893,'F',1111115);
+
+insert into EMPLEADO values
+(0000005,'mario','martinez',31001093,'M',1111116);
+
+
+insert into EMPLEADO values
+(0000006,'andrea','lotigio',313345893,'F',1111117);
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+---ID-NOMBRE--APELLIDO--TELEFONO----NOMBRE DE PUNTO DE VENTA--SEXO--
+
+insert into DUENO.DEL.PUNTO.DE.VENTA values
+(0000099,'ayllen','perez',268731092,'coratiendas-S.A.',F);
+
+insert into DUENO.DEL.PUNTO.DE.VENTA values
+(0000098,'camila','anderson',268709822,'fruver.internacional',F);
+
+insert into DUENO.DEL.PUNTO.DE.VENTA values
+(0000097,'pilar','calderon',268702738,'la.78',F);
+
+insert into DUENO.DEL.PUNTO.DE.VENTA values
+(0000096,'lucas','fernandez',215832738,'el.coro',M);
+
+insert into DUENO.DEL.PUNTO.DE.VENTA values
+(0000095,'pedro','gomez',215813728,'intel.fruber',M);
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------ID_PUNTO_DE_VENTA------ID_EMPLEADO------ID_DUENO-------NOMBRE_PUNTO_DE_VENTA-------DIRECCION------NOMBRE_DUENO
+
+insert into PUNTO.DE.VENTA values
+(0000050,0000001,0000099,'coratiendas-S.A.','AV. 20 DE NOV. NO. 881 ESQ. ALDAMA','ayllen');
+
+insert into PUNTO.DE.VENTA values
+(0000051,0000002,0000098,'fruver.internacional','AV. INDEPENDENCIA NO. 670','camila');
+
+insert into PUNTO.DE.VENTA values
+(0000053,0000003,0000097,'la.78','AV. INDEPENDENCIA NO. 985-A','pilar');
+
+insert into PUNTO.DE.VENTA values
+(0000054,0000004,0000096,'el.coro','AV. INDEPENDENCIA NO. 545','lucas');
+
+insert into PUNTO.DE.VENTA values
+(0000055,0000005,0000095,'intel.fruber','AV. INDEPENDENCIA NO. 545-D','pedro');
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------ID_VENTAS------ID_EMPLEADO------MONTO_VENTA-------FECHA_VENTA---
+
+insert into VENTAS.DEL.EMPLEADO values
+(1000000,0000001,10000000,to_date('01042017','DD-MM-YYYY'));
+
+insert into VENTAS.DEL.EMPLEADO values
+(1100000,0000002,20000000,to_date('01052017','DD-MM-YYYY'));
+
+insert into VENTAS.DEL.EMPLEADO values
+(1200000,0000003,15000000,to_date('01062017','DD-MM-YYYY'));
+
+insert into VENTAS.DEL.EMPLEADO values
+(1300000,0000004,9000000,to_date('01072017','DD-MM-YYYY'));
+
+insert into VENTAS.DEL.EMPLEADO values
+(1400000,0000005,1000000,to_date('01082017','DD-MM-YYYY'));
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------ID_PRODUCTO------NOMBRE_PRODUCTO------PRECIO_PRODUCTO-----
+
+
+insert into PRODUCTO values
+(0000150,'chocolate',20000);
+
+insert into PRODUCTO values
+(0000151,'arroz',10000);
+
+insert into PRODUCTO values
+(0000152,'platano',15000);
+
+insert into PRODUCTO values
+(0000153,'remolacha',11000);
+
+insert into PRODUCTO values
+(0000154,'linaza',9000);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------ID_PEDIDOS------ID_PRODUCRO------ID_PUNTO_DE_VENTA-----NOMBRE_PRODUCTO----------CANTIDAD-----MONTO_DE_VENTA-------FECHA_PEDIDO-------PRECIO_PARCIAL--------
+
+
+insert into PEDIDOS values
+(0010000,0000150,0000054,'platano',189,2835000,to'date('01042017','DD-MM-YYYY'),2835000);
+
+insert into PEDIDOS values
+(0011000,0000154,0000052,'remolacha',178,1958000,to_date('01052017','DD-MM-YYYY'),1958000);
+
+insert into PEDIDOS values
+(0012000,0000153,0000051,'linaza',265,2385000,to_date('01062017','DD-MM-YYYY'),2385000);
+
+insert into PEDIDOS values
+(0013000,0000152,0000050,'arroz',300,3000000,to_date('01072017','DD-MM-YYYY'),3000000);
+
+insert into PEDIDOS values
+(0014000,0000151,0000053,'chocolate',290,5800000,to_date('01082017','DD-MM-YYYY'),5800000);
+
+insert into PEDIDOS values
+(0015000,0000153,0000053,'linaza',240,2160000,to_date('01082017','DD-MM-YYYY'),2160000);
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------ID_FACTURA------ID_PEDIDOS------ID_EMPLEADO-----ID_PUNTO_DE_VENTA----------FECHA_ENTREGA-----FECHA_FACTURACION-------PRECIO_PAGAR -------------
+
+
+insert into FACTURA values
+(0001000,0011000,0000001,0000052,to_date('01042017','DD-MM-YYYY'),to_date('01042017','DD-MM-YYYY'),1958000);
+
+insert into FACTURA values
+(0001001,0013000,0000002,0000050,to_date('01052017','DD-MM-YYYY'),to_date('01042017','DD-MM-YYYY'),3000000);
+
+insert into FACTURA values
+(0001002,0012000,0000003,0000051,to_date('01062017','DD-MM-YYYY'),to_date('01042017','DD-MM-YYYY'),2385000));
+
+insert into FACTURA values
+(0001003,0010000,0000004,0000054,to_date('01072017','DD-MM-YYYY'),to_date('01042017','DD-MM-YYYY'),2835000);
+
+insert into FACTURA values
+(0001004,0014000,0000005,0000053,to_date('01072017','DD-MM-YYYY'),to_date('01042017','DD-MM-YYYY'),5800000);
+
+insert into FACTURA values
+(0001005,0015000,0000005,0000053,to_date('01072017','DD-MM-YYYY'),to_date('01042017','DD-MM-YYYY'),2160000);
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------ORDER BY-------------------ORDER BY--------------ORDER BY--------------ORDER BY--------------ORDER BY--------------ORDER BY--------------ORDER BY------
+
+select *
+from FACTURA
+ORDER BY PRECIO_PAGAR DESC;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------GROUP BY--------------------GROUP BY-------------GROUP BY-------------GROUP BY-------------GROUP BY-------------GROUP BY-------------GROUP BY-------------GROUP BY--------
+
+select ID_PUNTO_DE_VENTA,SUM(PRECIO_PAGAR)
+from FACTURA
+GROUP BY ID_PUNTO_DE_VENTA ;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------HAVING-------------------HAVING--------------HAVING--------------HAVING--------------HAVING--------------HAVING--------------HAVING--------------HAVING---------
+select ID_PUNTO_DE_VENTA,SUM(PRECIO_PAGAR)
+from FACTURA
+GROUP BY ID_PUNTO_DE_VENTA 
+HAVING SUM(PRECIO_PAGAR)>4000000;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---BETWEEN-----------BETWEEN------BETWEEN------BETWEEN------BETWEEN------BETWEEN----BETWEEN------BETWEEN------BETWEEN------BETWEEN------BETWEEN------BETWEEN------BETWEEN----
+
+SELECT *
+FROM FACTURA
+WHERE PRECIO_PAGAR BETWEEN '1000000' AND '3000000';
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------

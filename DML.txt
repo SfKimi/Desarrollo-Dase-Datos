@@ -1,0 +1,98 @@
+
+create table ESTUDIANTE ( CEDULA number(7) not null primary key, 
+NOMBRE varchar(20) not null,
+TELEFONO number(9)
+ );
+ 
+ 
+---------------------------------------------------------------------
+
+create table MATERIA ( ID_MATERIA number(7) not null primary key, 
+NOMBRE_M varchar(20),
+CREDITOS number(3)    );
+
+--------------------------------------------------------------------
+create table MATRICULA ( ID_MATRICULA number(7) not null primary key, 
+CEDULA number(7) not null, 
+ID_MATERIA number(7) not null,
+FECHA date,
+foreign key (CEDULA) references ESTUDIANTE (CEDULA),
+foreign key (ID_MATERIA) references MATERIA (ID_MATERIA)
+   );
+
+---------------------------------------------------------
+
+insert into ESTUDIANTE values
+(0000001,'oscar',6374567);
+
+insert into ESTUDIANTE values
+(0000002,'mario',6374667);
+
+insert into ESTUDIANTE values
+(0000003,'luis',6682767);
+
+insert into ESTUDIANTE values
+(0000004,'pedro',6374567);
+
+insert into ESTUDIANTE values
+(0000005,'paula',6370963);
+
+-------------------------------------------------------------------
+
+insert into MATERIA values
+(0000001,'CALCULO',2);
+
+insert into MATERIA values
+(0000002,'FISICA',1);
+
+insert into MATERIA values
+(0000003,'QUIMICA',4);
+
+insert into MATERIA values
+(0000004,'GEOMETRIA',4);
+
+insert into MATERIA values
+(0000005,'ARTES',4);
+
+-----------------------------------------------------------------------
+
+insert into MATRICULA values
+(0000001,0000001,0000001,to_date('01042017','DD-MM-YYYY'));
+
+insert into MATRICULA values
+(0000002,0000002,0000002,to_date('01052017','DD-MM-YYYY'));
+
+insert into MATRICULA values
+(0000003,0000003,0000003,to_date('01062017','DD-MM-YYYY'));
+
+insert into MATRICULA values
+(0000004,0000004,0000004,to_date('01072017','DD-MM-YYYY'));
+
+insert into MATRICULA values
+(0000005,0000005,0000005,to_date('01072017','DD-MM-YYYY'));
+
+----------------------------------------------------------------------
+
+ SELECT *
+  FROM  ESTUDIANTE
+  WHERE CEDULA=0000004;
+
+SELECT *
+  FROM  MATERIA
+  WHERE CREDITOS<3;
+
+SELECT CEDULA,ID_MATERIA 
+  FROM  MATRICULA
+  WHERE CEDULA=0000002;
+  
+  -----------------------------------------------
+  
+  UPDATE ESTUDIANTE
+SET TELEFONO=1234567
+WHERE NOMBRE='luis' ;
+
+UPDATE MATERIA
+SET NOMBRE_M='INGLES'
+WHERE NOMBRE_M='GEOMETRIA' ;
+
+-------------------------------------------------
