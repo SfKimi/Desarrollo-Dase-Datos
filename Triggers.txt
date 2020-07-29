@@ -1,0 +1,387 @@
+--EJERCICIO DE  CLASE  DESARROLLO-----DELETE  FROM proyecto where idProyecto=P_ID CASCADE CONSTRAINT ;
+CREATE TABLE  linea  (
+  idLinea       CHAR(20) primary key, 
+  nombreLinea   CHAR(100) NOT NULL , 
+  financiadoPor CHAR(30)  NOT NULL
+);
+
+CREATE TABLE  proyecto (
+  idProyecto     CHAR(20) primary key, 
+  idLinea        CHAR(20) NOT NULL, 
+  nombreProyecto CHAR(100) NOT NULL, 
+  F_Inicio       DATE NOT NULL, 
+  F_Terminacion  DATE NOT NULL, 
+  Presupuesto    NUMBER(10,0) NOT NULL, 
+  CONSTRAINT     FK_Linea    FOREIGN KEY (idLinea) REFERENCES  LINEA (idLinea)
+);
+
+CREATE TABLE depAcademico (
+  idDepartamento NUMBER primary key,
+  Departamento   CHAR(30) NOT NULL
+);
+
+CREATE TABLE  investigador (
+  id                CHAR(13) primary key, 
+  nombreInvestigador CHAR(50) NOT NULL, 
+  telefono           NUMBER NOT NULL,
+  email              CHAR(50) NOT NULL,
+  idDepartamento     NUMBER   NOT NULL,  
+  CONSTRAINT FK_DepAcademico FOREIGN KEY (idDepartamento) 
+                             REFERENCES  DEPACADEMICO (idDepartamento)
+);
+
+CREATE TABLE  asignado (
+  id_investigador   CHAR(13) NOT NULL, 
+  idProyecto        CHAR(20) NOT NULL,  
+  F_Inicio          DATE NOT NULL, 
+  F_Termino         DATE,
+  tipoParticipacion CHAR(20) NOT NULL,
+  CONSTRAINT FK_Investigador FOREIGN KEY (id_investigador) REFERENCES  investigador (id), 
+  CONSTRAINT FK_Proyecto     FOREIGN KEY (idProyecto)  REFERENCES  proyecto (idProyecto)
+);
+
+insert into linea values('AM10','Tecnologia y Ciencia','Colciencias Col');
+insert into linea values('AM11','Telematica, gestión de redes y seguridad','Colciencias Col');
+insert into linea values('RP10','Medio ambiente y gestión de recursos','USTA');
+insert into linea values('CF15','Robotica y mecanica','USB');
+insert into linea values('EL20','Sociedad, transformación y humanismo','Colfuturo');
+--------------------------------------------------------------------------------------------
+-----------------------------------DELETE PARA LOS DATOS DE LA TABLA proyecto---------------
+--------------------------------------------------------------------------------------------
+DELETE  FROM proyecto  ;
+
+Insert into proyecto values
+('2016-2114','AM10','Construccion de un simulador para practicas de produccion de quesos',TO_DATE('2013/10/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),15000000);
+
+Insert into proyecto values
+('2016-2134','AM10','Lineamiento para la presentacion de proyectos de software',TO_DATE('2014/02/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),10000000);
+
+Insert into proyecto values
+('2016-2135','CF15','Diseño de plataforma electronica para el lanzamiento...',TO_DATE('2014/04/01', 'yyyy/mm/dd'),TO_DATE('2015/03/20', 'yyyy/mm/dd'),10000000);
+
+insert into depAcademico values(1245,'Faculta de CyT');
+insert into depAcademico values(1247,'Faculta de Educación');
+insert into depAcademico values(1249,'Faculta de Ingenieria');
+insert into depAcademico values(1221,'Depart Investigaciones');
+insert into depAcademico values(1280,'Fac Admon y CC');
+
+insert into Investigador values(1064745844,'Fabian Cortes',2541242,'fabiancortesj@gmail.com',1245 );
+insert into Investigador values(1064744544,'Cecilia Montes',9841202,'cmontes@ustadistancia.edu.co',1245 );
+insert into Investigador values(19784520,'luis Carlos Romero',7356987,'Lromerot@ustadistancia.edu.co',1249 );
+
+
+insert into asignado values('1064745844','2016-2114',TO_DATE('2013/10/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),'1');
+
+insert into asignado values('1064744544','2016-2134',TO_DATE('2014/10/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),'2');
+
+---------------------cursores( no funciona)------------------------------cursores(no funciona)----------------------cursores(no funciona)-----------------cusores(no funciona)----------------cursores---------cursores-----------------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE PROCEDURE ELIMINACION
+AS
+CURSOR listas IS  SELECT idProyecto, NOMBREPROYECTO   FROM  proyecto;
+idp char(20);
+--CURSOR listas IS  SELECT  nombreProyecto  FROM  proyecto;
+nom char(20);
+--pres number(10);
+begin
+open listas;
+
+LOOP
+FETCH listas INTO idp,nom;
+DBMS_OUTPUT.PUT_LINE('identificacion' || idp || 'nombre'|| nom);
+--FETCH listas INTO idp,nom,pres;
+EXIT WHEN listas %NOTFOUND;
+END LOOP;
+CLOSE listas;
+END ELIMINACION;
+set serveroutput on;
+execute ELIMINACION;
+
+--------------if con insert into------------------------if con insert into------------------------if con insert into--------------------if con insert into----------------if con insert into----------------insert into------------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE REGISTRAR_PROYECTO(P_ID CHAR,
+L_ID  CHAR,
+P_NOMBRES CHAR,
+F_I DATE,
+F_T DATE,
+PR NUMBER)
+ IS
+total number;
+BEGIN
+total :=0;
+select count(*) into total from proyecto where idProyecto=P_ID;
+if total = 0 then
+insert into  proyecto values (P_ID,L_ID,P_NOMBRES,F_I,F_T,PR );
+end if;
+end;
+
+--------------------------------------------------------------------------------------------
+--------------BLOQUE ANONIMO DEL INSERT INTO PARA COMPROBAR SU FUNCIONALIUDAD---------------
+--------------------------------------------------------------------------------------------
+begin
+---------------------------------INSTRUCCION PARA VERIFICAR QUE NO CREA UN REGISTRO QUE  YA  EXISTE----------------
+REGISTRAR_PROYECTO('2016-2114','AM10','Construccion edificios',TO_DATE('2010/03/04', 'yyyy/mm/dd'),TO_DATE('2016/03/07', 'yyyy/mm/dd'),100000);
+
+---------------------------------INSTRUCCION PARA VERIFICAR QUE CREA UN REGISTRO QUE  NO  EXISTE----------------
+REGISTRAR_PROYECTO('2016-2119','EL20','Construccion quesos',TO_DATE('2010/07/04', 'yyyy/mm/dd'),TO_DATE('2014/09/09', 'yyyy/mm/dd'),15300);
+commit;
+end;
+-------------------------------------CONSULTA DE LA TABLA PARA VERIFICAR LOS CAMBIOS----------------------------------------------
+select * from PROYECTO; 
+ 
+ 
+-------if con update-------------if con update-------------------if con update-------------------if con update-----------------if con update------------------if con update-----------update-----------------update-----------------------------------------------------------------------------------------------------
+                                              -------------INSTRUCCIONES PARA REVISAR----------------------------------------------
+--------------EJECUTAR EL SELECT DE LA TABLA proyecto ANTES DE  EJECUTAR EL BLOQUE ANONIMO PARA PODER  COMPARAR EL CAMBIO DE LOS DATOS EN LAS TUPLAS---------------------------------
+--------------DE SER NECESARIO ELIMINAR ALGUN REGISTRO HAY UN DELETE JUNTO A LA  INSERCION DE DATOS DE LA TABLA proyecto PARA SER USADO CON EL CAMPO "idProyecto"--------------------
+--------------RECORDAR VOLVER  A INGRESAR  LAS TUPLAS SI SE ELIMINARON---------------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE CAMBIAR_PROYECTO(P_ID CHAR,
+L_ID  CHAR,
+P_NOMBRES CHAR,
+F_I DATE,
+F_T DATE,
+PR NUMBER)
+ IS
+total number;
+ BEGIN
+total :=0;
+select count(*) into total from proyecto where idProyecto=P_ID;
+if total = 1  then
+UPDATE proyecto SET idLinea = L_ID,NOMBREPROYECTO = P_NOMBRES,F_Inicio=F_I,F_TERMINACION=F_T, Presupuesto=PR  WHERE idProyecto=P_ID;
+end if;
+end;
+
+--------------------------------------------------------------------------------------------
+-------------------BLOQUE ANONIMO DEL UPDATE PARA COMPROBAR SU FUNCIONALIUDAD---------------
+--------------------------------------------------------------------------------------------
+begin
+---------------------------------INSTRUCCION PARA VERIFICAR QUE CAMBIE UN REGISTRO QUE SI EXISTE----------------
+CAMBIAR_PROYECTO('2016-2135','CF15','pan',TO_DATE('2010/06/04', 'yyyy/mm/dd'),TO_DATE('2014/02/02', 'yyyy/mm/dd'),1500);
+---------------------------------INSTRUCCION PARA VERIFICAR QUE NO CAMBIE UN REGISTRO QUE  NO  EXISTE----------------
+CAMBIAR_PROYECTO('2016-2101','CF15','pan',TO_DATE('2010/06/04', 'yyyy/mm/dd'),TO_DATE('2014/02/02', 'yyyy/mm/dd'),1500);
+commit;
+end;
+
+-------------------------------------CONSULTA DE LA TABLA PARA VERIFICAR LOS CAMBIOS----------------------------------------------
+select * from PROYECTO; 
+
+
+----------------if con delete(COPILA PERO NO BORRA  POR CONFLICTO CON FORANIA)------------------if con delete(COPILA PERO NO BORRA  POR  FORANIA)------------------------if con delete(COPILA PERO NO BORRA  POR  FORANIA)---------------------delete---------------delete---------------------delete--------------delete---------------------------------------------------------------------------------------------
+set serveroutput on;
+CREATE OR REPLACE PROCEDURE ELIMINAR_PROYECTO(P_ID CHAR
+)
+ IS
+total number;
+ BEGIN
+total :=0;
+select count(*) into total from proyecto where idProyecto=P_ID;
+if total = 1  then
+DELETE  FROM proyecto where idProyecto=P_ID ;
+end if;
+COMMIT;
+end;
+
+--------------------------------------------------------------------------------------------
+-------------------BLOQUE ANONIMO DEL DELETE PARA COMPROBAR SU FUNCIONALIUDAD---------------
+--------------------------------------------------------------------------------------------
+set serveroutput on;
+begin
+---------------------------------INSTRUCCION PARA VERIFICAR QUE ELIMINE UN REGISTRO QUE EXISTA----------------
+ELIMINAR_PROYECTO('2016-2114');
+---------------------------------INSTRUCCION PARA VERIFICAR QUE NO ELIMINE UN REGISTRO  QUE NO EXISTA----------------
+ELIMINAR_PROYECTO('2016-2000');
+
+commit;
+end;
+
+-------------------------------------CONSULTA DE LA TABLA PARA VERIFICAR LOS CAMBIOS----------------------------------------------
+select * from PROYECTO; 
+
+---------EXCEPTION(FUNCIONABLE PERO NO MANDA MENSAJE)--------------------EXCEPTION(FUNCIONABLE PERO NO MANDA MENSAJE)-------------EXCEPTION(FUNCIONABLE PERO NO MANDA MENSAJE)-------------------EXCEPTION(FUNCIONABLE PERO NO MANDA MENSAJE)----------------------------EXCEPTION----------------------------EXCEPTION---------------EXCEPTION-------------------------------------------------------------
+set serveroutput on;
+
+CREATE OR REPLACE PROCEDURE REGISTRAR_SEGUNDARIA(P_ID CHAR,
+
+L_ID  CHAR,
+
+P_NOMBRES CHAR,
+
+F_I DATE,
+
+F_T DATE,
+
+PR NUMBER)
+
+ IS
+
+total number;
+
+
+
+ BEGIN
+
+total :=0;
+
+
+select count(*) into total from proyecto where idProyecto=P_ID;
+
+if total = 0 then
+insert into  proyecto values (P_ID,L_ID,P_NOMBRES,F_I,F_T,PR );
+end if;
+
+EXCEPTION
+   WHEN DUP_VAL_ON_INDEX THEN
+      DBMS_OUTPUT.PUT_LINE ('Dato duplicado ' );
+end;
+
+set serveroutput on;
+
+begin
+REGISTRAR_SEGUNDARIA('2016-2114','AM10','Lineamiento para la presentacion de proyectos de software',TO_DATE('2014/02/11', 'yyyy/mm/dd'),TO_DATE('2014/11/09', 'yyyy/mm/dd'),10000000);
+
+commit;
+end;
+select * from PROYECTO; 
+
+------------------------------------------COMPROBACION DE  CONMTADOR-----------------------------------------------------
+select count(*)  from proyecto where idProyecto='2016-2114';
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------TRIGER DE RESPALDO DESPUES  DE MODIFICACION--------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Create Table PROYECTO_ACTUALIZADOS (
+
+ANTERIOR_idLinea CHAR(20) , NUEVO_idLinea CHAR(20),
+ANTERIOR_nombreProyecto CHAR(100) , NUEVO_nombreProyecto CHAR(100),
+ANTERIOR_F_Inicio DATE , NUEVO_F_Inicio DATE,
+ANTERIOR_F_Terminacion  DATE , NUEVO_F_Terminacion  DATE,
+ANTERIOR_Presupuesto    NUMBER(10,0), NUEVO_Presupuesto    NUMBER(10,0),
+F_MODIFICACION DATE
+);
+DROP TABLE PROYECTO_ACTUALIZADOS ;
+select * from proyecto ;
+select * from PROYECTO_ACTUALIZADOS ;
+
+create or replace  trigger ACTUALIZAR_PROYECTO 
+BEFORE UPDATE ON proyecto 
+FOR EACH ROW 
+--WHEN (OLD.Presupuesto<>NEW.Presupuesto)
+--DECLARE
+BEGIN
+INSERT INTO PROYECTO_ACTUALIZADOS 
+(
+ANTERIOR_idLinea , NUEVO_idLinea ,
+ANTERIOR_nombreProyecto  , NUEVO_nombreProyecto ,
+ANTERIOR_F_Inicio , NUEVO_F_Inicio ,
+ANTERIOR_F_Terminacion   , NUEVO_F_Terminacion  ,
+ANTERIOR_Presupuesto   , NUEVO_Presupuesto    ,
+F_MODIFICACION ) 
+VALUES 
+( 
+:OLD.idLinea, :NEW.idLinea ,
+:OLD.nombreProyecto, :NEW.nombreProyecto,
+:OLD.F_Inicio, :NEW.F_Inicio ,
+:OLD.F_Terminacion, :NEW.F_Terminacion,
+:OLD.Presupuesto, :NEW.Presupuesto,
+sysdate);
+END;
+
+
+update proyecto set Presupuesto=Presupuesto-50000 where idProyecto ='2016-2135' 
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------TRIGER DE RESPALDO DESPUES  DE ELIMINAR--------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Create Table PROYECTOS_ELIMINADOS (
+E_idProyecto     CHAR(20),
+E_idLinea CHAR(20) , 
+E_nombreProyecto CHAR(100) , 
+E_F_Inicio DATE ,
+E_F_Terminacion  DATE , 
+E_Presupuesto    NUMBER(10,0),
+F_MODIFICACION DATE
+);
+
+DROP TABLE PROYECTOS_ELIMINADOS ;
+select * from proyecto ;
+select * from PROYECTOS_ELIMINADOS ;
+
+
+create or replace  trigger ELIMINAR_PROYECTO 
+AFTER DELETE ON proyecto 
+FOR EACH ROW 
+--WHEN (OLD.Presupuesto<>NEW.Presupuesto)
+--DECLARE
+BEGIN
+INSERT INTO PROYECTOS_ELIMINADOS  
+(
+E_idProyecto,
+E_idLinea, 
+E_nombreProyecto, 
+E_F_Inicio,
+E_F_Terminacion, 
+E_Presupuesto,
+F_MODIFICACION  ) 
+VALUES 
+( 
+:OLD.idProyecto,
+:OLD.idLinea, 
+:OLD.nombreProyecto, 
+:OLD.F_Inicio, 
+:OLD.F_Terminacion, 
+:OLD.Presupuesto, 
+sysdate);
+END;
+
+DELETE FROM proyecto where idProyecto ='2016-2109'
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------TRIGER DE RESPALDO DESPUES  DE INGRESAR--------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Create Table PROYECTOS_INGRESAR (
+M_idProyecto     CHAR(20),
+M_idLinea CHAR(20) , 
+M_nombreProyecto CHAR(100) , 
+M_F_Inicio DATE ,
+M_F_Terminacion  DATE , 
+M_Presupuesto    NUMBER(10,0),
+F_MODIFICACION DATE
+);
+
+
+create or replace  trigger INGRESAR_PROYECTO 
+AFTER INSERT         ON proyecto 
+FOR EACH ROW 
+--WHEN (OLD.Presupuesto<>NEW.Presupuesto)
+--DECLARE
+BEGIN
+INSERT INTO PROYECTOS_INGRESAR  
+(
+M_idProyecto,
+M_idLinea, 
+M_nombreProyecto, 
+M_F_Inicio,
+M_F_Terminacion, 
+M_Presupuesto,
+F_MODIFICACION  ) 
+VALUES 
+( 
+:NEW.idProyecto,
+:NEW.idLinea, 
+:NEW.nombreProyecto, 
+:NEW.F_Inicio, 
+:NEW.F_Terminacion, 
+:NEW.Presupuesto, 
+sysdate);
+END;
+
+select * from proyecto ;
+select * from PROYECTOS_INGRESAR  ;
+
+INSERT INTO proyecto (idProyecto, idLinea, nombreProyecto, F_Inicio, F_Terminacion, Presupuesto)VALUES ('2016-2199','EL20','os',TO_DATE('2013/02/11', 'yyyy/mm/dd'),TO_DATE('2014/01/09', 'yyyy/mm/dd'),80000); 
